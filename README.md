@@ -91,6 +91,21 @@ docker compose up --build
 Esse único comando sobe API e frontend. A API executa com usuário não-root e persiste o SQLite
 no volume `orders-data`; o Nginx do frontend encaminha as chamadas para o hostname interno `api`.
 
+### Compartilhar uma demonstração temporária
+
+Com o Compose em execução, um Quick Tunnel pode publicar o frontend e a API por uma única URL:
+
+```bash
+npx --yes wrangler tunnel quick-start http://localhost:3000
+```
+
+O comando exibe um endereço aleatório em `trycloudflare.com`. Mantenha esse terminal e os
+contêineres abertos durante a avaliação; quando o processo for encerrado, o endereço deixa de
+funcionar. Como qualquer pessoa com a URL poderá autenticar e alterar os pedidos, use essa opção
+somente com os dados descartáveis do ambiente de demonstração. [Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/trycloudflare/)
+são destinados a testes e desenvolvimento, não possuem garantia de disponibilidade e não devem
+substituir um deploy de produção.
+
 ### URLs
 
 | Recurso | Execução local | Docker Compose |

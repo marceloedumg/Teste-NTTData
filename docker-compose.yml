@@ -1,0 +1,55 @@
+services:
+  # Serviço principal com SQLite persistido fora do ciclo de vida do contêiner.
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__OrdersDb: Data Source=/app/data/orders.db
+      Jwt__Issuer: OrderManagement.Api
+      Jwt__Audience: OrderManagement.Client
+      Jwt__Key: local-docker-only-key-change-me-in-production-2026-orders-api
+      Jwt__ExpirationMinutes: 60
+      # O Compose é um ambiente de avaliação; um deploy real deve listar somente seus domínios oficiais.
+      Cors__AllowedOrigins__0: http://localhost:3000
+      Cors__AllowedOrigins__1: http://localhost:4200
+      Cors__AllowedOrigins__2: http://localhost:5173
+      Cors__AllowedOrigins__3: http://127.0.0.1:3000
+      Cors__AllowedOrigins__4: http://127.0.0.1:4200
+      Cors__AllowedOrigins__5: http://127.0.0.1:5173
+    ports:
+      # A API continua ouvindo em 8080 no contêiner, mas usa 8082 no host para evitar conflitos locais.
+      - "8082:8080"
+    volumes:
+      - orders-data:/app/data
+    restart: unless-stopped
+
+  # O frontend é servido por Nginx e encaminha /auth e /api para o serviço interno da API.
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+  # Profile opcional para não consumir os recursos do SonarQube durante o uso normal da API.
+  sonarqube:
+    image: sonarqube:community
+    profiles:
+      - quality
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-logs:/opt/sonarqube/logs
+
+volumes:
+  orders-data:
+  sonarqube-data:
+  sonarqube-logs:

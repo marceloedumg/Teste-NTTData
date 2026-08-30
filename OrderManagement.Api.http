@@ -1,0 +1,40 @@
+@host = http://localhost:5080
+@token = substitua-pelo-accessToken-do-login
+@orderId = substitua-pelo-id-do-pedido
+
+### Login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "dev@martech.com",
+  "password": "Senha@123"
+}
+
+### Criar pedido
+POST {{host}}/api/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": "b9f58fa8-05f2-4bb7-aeb5-d2c549b82857",
+  "items": [
+    {
+      "productName": "Mechanical Keyboard",
+      "quantity": 2,
+      "unitPrice": 350.50
+    }
+  ]
+}
+
+### Listar pedidos
+GET {{host}}/api/orders?page=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### Consultar pedido
+GET {{host}}/api/orders/{{orderId}}
+Authorization: Bearer {{token}}
+
+### Cancelar pedido
+PATCH {{host}}/api/orders/{{orderId}}/cancel
+Authorization: Bearer {{token}}

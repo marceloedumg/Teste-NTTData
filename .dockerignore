@@ -1,0 +1,15 @@
+**/bin
+**/obj
+.git
+.idea
+.vs
+.vscode
+TestResults
+coverage
+frontend/node_modules
+frontend/dist
+*.db
+*.db-shm
+*.db-wal
+Instructions.md
+Teste .NET SR 1.pdf
